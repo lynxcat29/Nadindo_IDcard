@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'id.narindo.idcard'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'id.narindo.idcard'
+        minSdk 24
+        targetSdk 34
+        // Naikkan versionCode setiap rilis baru agar bisa di-update di HP
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            // Keystore tetap -> APK baru bisa menimpa (update) APK lama tanpa uninstall.
+            // SIMPAN repo ini sebagai PRIVATE. Ganti password bila perlu (lihat PANDUAN).
+            storeFile file('narindo-release.jks')
+            storePassword System.getenv('KEYSTORE_PASSWORD') ?: 'narindo2026'
+            keyAlias 'narindo'
+            keyPassword System.getenv('KEY_PASSWORD') ?: 'narindo2026'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix '.debug'
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "NarindoIDCard-${variant.versionName}-${variant.buildType.name}.apk"
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.11.0'
+    implementation 'androidx.core:core:1.13.1'
+}
